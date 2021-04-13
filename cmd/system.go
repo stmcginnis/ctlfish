@@ -16,5 +16,5 @@ var systemCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(systemCmd)
-	chassisCmd.PersistentFlags().StringP("connection", "c", config.GetDefault(), "The stored connection name to use.")
+	systemCmd.PersistentFlags().StringP("connection", "c", config.GetDefault(), "The stored connection name to use.")
 }
