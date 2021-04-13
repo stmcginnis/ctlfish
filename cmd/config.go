@@ -43,7 +43,7 @@ func NewGetConfigCmd() *cobra.Command {
 		Short: "Get saved connection information.",
 		Long:  "The get command will get details for a specified connection or list all defined connections.",
 		Run:   getConfigs,
-		Args:  cobra.MaximumNArgs(1),
+		Args:  cobra.ExactArgs(1),
 	}
 
 	return cmd
@@ -57,11 +57,6 @@ func getConfigs(cmd *cobra.Command, args []string) {
 	var data [][]string
 	if len(args) == 1 {
 		system := config.GetSystem(args[0])
-		if system == nil {
-			fmt.Fprintf(os.Stderr, "System '%s' was not found.\n", args[0])
-			os.Exit(1)
-		}
-
 		isdefault := " "
 		if args[0] == defaultSys {
 			isdefault = "*"
@@ -103,13 +98,9 @@ func NewAddConfigCmd() *cobra.Command {
 		Short: "Add new connection information.",
 		Long:  "Adds new connection to use with the given name.",
 		Run: func(cmd *cobra.Command, args []string) {
-			if len(args) > 1 {
-				fmt.Fprintln(os.Stderr, "Only connection name may be provided.")
-				os.Exit(1)
-			}
 			addNewSystem(args[0], &systemSettings, makeDefault)
 		},
-		Args: cobra.MinimumNArgs(1),
+		Args: cobra.ExactArgs(1),
 	}
 
 	cmd.Flags().Uint16VarP(&systemSettings.Port, "port", "p", 0, "Port used to connect (defaults to 443, or port 80 if 'http' protocol is specified.)")
@@ -186,13 +177,9 @@ func NewRemoveConfigCmd() *cobra.Command {
 		Short: "Remove stored connection information.",
 		Long:  "Removes connection with the given name.",
 		Run: func(cmd *cobra.Command, args []string) {
-			if len(args) > 1 {
-				fmt.Fprintln(os.Stderr, "Only connection name may be provided.")
-				os.Exit(1)
-			}
 			config.RemoveSystemConfig(args[0])
 		},
-		Args: cobra.MinimumNArgs(1),
+		Args: cobra.ExactArgs(1),
 	}
 
 	return cmd
@@ -207,11 +194,6 @@ func NewSetConfigCmd() *cobra.Command {
 		Short: "Set connection information.",
 		Long:  "Updates stored connection with the given name with new values.",
 		Run: func(cmd *cobra.Command, args []string) {
-			if len(args) > 1 {
-				fmt.Fprintln(os.Stderr, "Only connection name may be provided.")
-				os.Exit(1)
-			}
-
 			system := config.GetSystem(args[0])
 			if system == nil {
 				fmt.Fprintf(os.Stderr, "Connection '%s' not found, add new connection.", args[0])
@@ -246,7 +228,7 @@ func NewSetConfigCmd() *cobra.Command {
 			config.AddSystemConfig(args[0], system, defaultConnection)
 			getConfigs(nil, []string{args[0]})
 		},
-		Args: cobra.MinimumNArgs(1),
+		Args: cobra.ExactArgs(1),
 	}
 
 	cmd.Flags().Uint16VarP(&systemSettings.Port, "port", "p", 0, "Port used to connect (defaults to 443, or port 80 if 'http' protocol is specified.)")
