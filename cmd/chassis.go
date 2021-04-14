@@ -5,11 +5,10 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/stmcginnis/ctlfish/config"
-	"github.com/stmcginnis/ctlfish/printers"
+	"github.com/stmcginnis/ctlfish/utils"
 	"github.com/stmcginnis/gofish"
 )
 
@@ -31,7 +30,7 @@ func NewGetChassisCmd() *cobra.Command {
 		Use:   "get [NAME_OR_ID]",
 		Short: "Get chassis information.",
 		Long:  "Get details for a specified chassis or list all defined chassis.",
-		Run:   getChassis,
+		RunE:  getChassis,
 		Args:  cobra.MaximumNArgs(1),
 	}
 
@@ -39,7 +38,7 @@ func NewGetChassisCmd() *cobra.Command {
 }
 
 // getChassis retrieves the chassis information from the system.
-func getChassis(cmd *cobra.Command, args []string) {
+func getChassis(cmd *cobra.Command, args []string) error {
 	// Create a new instance of gofish client
 	var settings *config.SystemConfig
 	connection, _ := cmd.Flags().GetString("connection")
@@ -50,9 +49,7 @@ func getChassis(cmd *cobra.Command, args []string) {
 	}
 
 	if settings == nil {
-		fmt.Fprintln(os.Stderr, "Unable to get system connection information.")
-		fmt.Fprintln(os.Stderr, "Set default to use or provide on command line with -c [NAME].")
-		os.Exit(1)
+		return utils.ErrorExit(cmd, "unable to get system connection information.\nSet default to use or provide on command line with -c [NAME].")
 	}
 
 	config := gofish.ClientConfig{
@@ -64,15 +61,13 @@ func getChassis(cmd *cobra.Command, args []string) {
 
 	c, err := gofish.Connect(config)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Failed to connect to '%s': %v\n", config.Endpoint, err)
-		os.Exit(1)
+		return utils.ErrorExit(cmd, "failed to connect to '%s': %v", config.Endpoint, err)
 	}
 	defer c.Logout()
 
 	chassis, err := c.Service.Chassis()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Failed to retrieve chassis information: %v\n", err)
-		os.Exit(1)
+		return utils.ErrorExit(cmd, "failed to retrieve chassis information: %v", err)
 	}
 
 	var data [][]string
@@ -90,6 +85,11 @@ func getChassis(cmd *cobra.Command, args []string) {
 		data = append(data, row)
 	}
 
+	if len(args) != 0 && len(data) == 0 {
+		return utils.ErrorExit(cmd, "chassis '%s' was not found.", args[0])
+	}
+
 	headers := []string{"id", "name", "power", "status"}
-	printers.PrintTable(headers, data)
+	utils.PrintTable(headers, data)
+	return nil
 }

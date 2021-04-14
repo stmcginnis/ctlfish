@@ -14,7 +14,7 @@ import (
 	"github.com/spf13/pflag"
 
 	"github.com/stmcginnis/ctlfish/config"
-	"github.com/stmcginnis/ctlfish/printers"
+	"github.com/stmcginnis/ctlfish/utils"
 )
 
 // configCmd represents the config command
@@ -87,7 +87,7 @@ func getConfigs(cmd *cobra.Command, args []string) {
 	}
 
 	headers := []string{" ", "name", "user", "endpoint"}
-	printers.PrintTable(headers, data)
+	utils.PrintTable(headers, data)
 }
 
 func NewAddConfigCmd() *cobra.Command {
@@ -97,8 +97,8 @@ func NewAddConfigCmd() *cobra.Command {
 		Use:   "add NAME",
 		Short: "Add new connection information.",
 		Long:  "Adds new connection to use with the given name.",
-		Run: func(cmd *cobra.Command, args []string) {
-			addNewSystem(args[0], &systemSettings, makeDefault)
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return addNewSystem(cmd, args[0], &systemSettings, makeDefault)
 		},
 		Args: cobra.ExactArgs(1),
 	}
@@ -119,11 +119,10 @@ func NewAddConfigCmd() *cobra.Command {
 	return cmd
 }
 
-func addNewSystem(name string, settings *config.SystemConfig, makeDefault bool) {
+func addNewSystem(cmd *cobra.Command, name string, settings *config.SystemConfig, makeDefault bool) error {
 	system := config.GetSystem(name)
 	if system != nil {
-		fmt.Fprintf(os.Stderr, "A system named '%s' already exists. Delete and readd or update the existing one.\n", name)
-		os.Exit(1)
+		return utils.ErrorExit(cmd, "a system named '%s' already exists. Delete and readd or update the existing one.\n", name)
 	}
 
 	// Validate the entries and set the conditional defaults
@@ -144,12 +143,10 @@ func addNewSystem(name string, settings *config.SystemConfig, makeDefault bool) 
 			parts = strings.Split(parts[1], "/")
 			port, err := strconv.Atoi(parts[0])
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "Failed to parse endpoint string: %s", err)
-				os.Exit(1)
+				return utils.ErrorExit(cmd, "failed to parse endpoint string: %s", err)
 			}
 			if port < 0 || port > 32768 {
-				fmt.Fprintln(os.Stderr, "Invalid port number provided.")
-				os.Exit(1)
+				return utils.ErrorExit(cmd, "invalid port number provided.")
 			}
 			settings.Port = uint16(port)
 		}
@@ -168,6 +165,7 @@ func addNewSystem(name string, settings *config.SystemConfig, makeDefault bool) 
 	// will be handled when they actually try to perform an operation.
 	config.AddSystemConfig(name, settings, makeDefault)
 	getConfigs(nil, []string{name})
+	return nil
 }
 
 // NewRemoveConfigCmd returns a command for removing stored connection info.
@@ -193,11 +191,10 @@ func NewSetConfigCmd() *cobra.Command {
 		Use:   "set NAME",
 		Short: "Set connection information.",
 		Long:  "Updates stored connection with the given name with new values.",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			system := config.GetSystem(args[0])
 			if system == nil {
-				fmt.Fprintf(os.Stderr, "Connection '%s' not found, add new connection.", args[0])
-				os.Exit(1)
+				return utils.ErrorExit(cmd, "connection '%s' not found, add new connection.", args[0])
 			}
 
 			defaultConnection := config.IsDefault(system)
@@ -206,7 +203,7 @@ func NewSetConfigCmd() *cobra.Command {
 				switch f.Name {
 				case "port":
 					if systemSettings.Port > 32768 {
-						fmt.Fprintf(os.Stderr, "Port value of %s is not valid.", f.Value.String())
+						fmt.Fprintf(cmd.ErrOrStderr(), "port value of %s is not valid.", f.Value.String())
 						os.Exit(1)
 					}
 
@@ -227,6 +224,7 @@ func NewSetConfigCmd() *cobra.Command {
 			})
 			config.AddSystemConfig(args[0], system, defaultConnection)
 			getConfigs(nil, []string{args[0]})
+			return nil
 		},
 		Args: cobra.ExactArgs(1),
 	}
