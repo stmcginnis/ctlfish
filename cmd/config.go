@@ -90,6 +90,7 @@ func getConfigs(cmd *cobra.Command, args []string) {
 	utils.PrintTable(headers, data)
 }
 
+// NewAddConfigCmd creates a new subcommand for adding new system settings.
 func NewAddConfigCmd() *cobra.Command {
 	systemSettings := config.SystemConfig{}
 	makeDefault := false
@@ -119,6 +120,7 @@ func NewAddConfigCmd() *cobra.Command {
 	return cmd
 }
 
+// addNewSystem performs the checks and handling for adding a new system.
 func addNewSystem(cmd *cobra.Command, name string, settings *config.SystemConfig, makeDefault bool) error {
 	system := config.GetSystem(name)
 	if system != nil {
