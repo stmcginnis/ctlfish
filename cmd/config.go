@@ -43,7 +43,7 @@ func NewGetConfigCmd() *cobra.Command {
 		Short: "Get saved connection information.",
 		Long:  "The get command will get details for a specified connection or list all defined connections.",
 		Run:   getConfigs,
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.MaximumNArgs(1),
 	}
 
 	return cmd
@@ -54,7 +54,7 @@ func getConfigs(cmd *cobra.Command, args []string) {
 	systems := config.GetSystems()
 	defaultSys := config.GetDefault()
 
-	var data [][]string
+	writer := utils.NewTableWriter(cmd.OutOrStdout(), " ", "name", "user", "endpoint")
 	if len(args) == 1 {
 		system := config.GetSystem(args[0])
 		isdefault := " "
@@ -62,13 +62,9 @@ func getConfigs(cmd *cobra.Command, args []string) {
 			isdefault = "*"
 		}
 
-		row := []string{
-			isdefault,
-			args[0],
-			system.Username,
-			fmt.Sprintf("%s://%s:%d", system.Protocol, system.Host, system.Port),
-		}
-		data = append(data, row)
+		writer.AddRow(
+			isdefault, args[0], system.Username,
+			fmt.Sprintf("%s://%s:%d", system.Protocol, system.Host, system.Port))
 	} else {
 		for system, settings := range systems {
 			isdefault := " "
@@ -76,18 +72,13 @@ func getConfigs(cmd *cobra.Command, args []string) {
 				isdefault = "*"
 			}
 
-			row := []string{
-				isdefault,
-				system,
-				settings.Username,
-				fmt.Sprintf("%s://%s:%d", settings.Protocol, settings.Host, settings.Port),
-			}
-			data = append(data, row)
+			writer.AddRow(
+				isdefault, system, settings.Username,
+				fmt.Sprintf("%s://%s:%d", settings.Protocol, settings.Host, settings.Port))
 		}
 	}
 
-	headers := []string{" ", "name", "user", "endpoint"}
-	utils.PrintTable(headers, data)
+	writer.Render()
 }
 
 // NewAddConfigCmd creates a new subcommand for adding new system settings.
