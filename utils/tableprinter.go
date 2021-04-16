@@ -11,7 +11,7 @@ import (
 	"github.com/olekukonko/tablewriter"
 )
 
-const colWidth = 5
+const colWidth = 50
 
 type TableOutputWriter interface {
 	SetHeaders(headers ...string)
