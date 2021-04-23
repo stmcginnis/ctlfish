@@ -54,14 +54,13 @@ func getSystem(cmd *cobra.Command, args []string) error {
 
 	writer := utils.NewTableWriter(
 		cmd.OutOrStdout(),
-		"id", "name", "cpu", "memory", "power", "status", "led", "description")
+		"name", "cpu", "memory", "power", "status", "led", "description")
 	for _, system := range systems {
 		if len(args) == 1 && (system.ID != args[0] && system.Name != args[0]) {
 			continue
 		}
 
 		writer.AddRow(
-			system.ID,
 			system.Name,
 			system.ProcessorSummary.Count,
 			fmt.Sprintf("%0.2f GB", system.MemorySummary.TotalSystemMemoryGiB),

@@ -51,13 +51,13 @@ func getChassis(cmd *cobra.Command, args []string) error {
 		return utils.ErrorExit(cmd, "failed to retrieve chassis information: %v", err)
 	}
 
-	writer := utils.NewTableWriter(cmd.OutOrStdout(), "id", "name", "power", "status")
+	writer := utils.NewTableWriter(cmd.OutOrStdout(), "name", "power", "status")
 	for _, chass := range chassis {
 		if len(args) == 1 && (chass.ID != args[0] && chass.Name != args[0]) {
 			continue
 		}
 
-		writer.AddRow(chass.ID, chass.Name, chass.PowerState, chass.Status.Health)
+		writer.AddRow(chass.Name, chass.PowerState, chass.Status.Health)
 	}
 
 	if len(args) != 0 && writer.RowCount() == 0 {

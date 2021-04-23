@@ -53,13 +53,13 @@ func getUser(cmd *cobra.Command, args []string) error {
 		return utils.ErrorExit(cmd, "failed to retrieve user information: %v", err)
 	}
 
-	writer := utils.NewTableWriter(cmd.OutOrStdout(), "id", "name", "role", "enabled", "description")
+	writer := utils.NewTableWriter(cmd.OutOrStdout(), "name", "role", "enabled", "description")
 	for _, user := range users {
 		if len(args) == 1 && (user.ID != args[0] && user.Name != args[0] && user.UserName != args[0]) {
 			continue
 		}
 
-		writer.AddRow(user.ID, user.UserName, user.RoleID, user.Enabled, user.Description)
+		writer.AddRow(user.UserName, user.RoleID, user.Enabled, user.Description)
 	}
 
 	if len(args) != 0 && writer.RowCount() == 0 {
