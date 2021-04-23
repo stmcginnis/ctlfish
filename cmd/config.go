@@ -157,7 +157,7 @@ func addNewSystem(cmd *cobra.Command, name string, settings *config.SystemConfig
 	// Add the new connection. We don't validate user name and password here. It
 	// will be handled when they actually try to perform an operation.
 	config.AddSystemConfig(name, settings, makeDefault)
-	getConfigs(nil, []string{name})
+	getConfigs(cmd, []string{name})
 	return nil
 }
 
@@ -216,7 +216,7 @@ func NewSetConfigCmd() *cobra.Command {
 				}
 			})
 			config.AddSystemConfig(args[0], system, defaultConnection)
-			getConfigs(nil, []string{args[0]})
+			getConfigs(cmd, []string{args[0]})
 			return nil
 		},
 		Args: cobra.ExactArgs(1),
