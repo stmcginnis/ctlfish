@@ -95,10 +95,10 @@ func NewAddConfigCmd() *cobra.Command {
 		Args: cobra.ExactArgs(1),
 	}
 
-	cmd.Flags().Uint16VarP(&systemSettings.Port, "port", "p", 0, "Port used to connect (defaults to 443, or port 80 if 'http' protocol is specified.)")
+	cmd.Flags().Uint16Var(&systemSettings.Port, "port", 0, "Port used to connect (defaults to 443, or port 80 if 'http' protocol is specified.)")
 	cmd.Flags().StringVarP(&systemSettings.Host, "host", "e", "", "The host name or IP address of the system.")
 	cmd.Flags().StringVarP(&systemSettings.Username, "user", "u", "", "The user name to connect as.")
-	cmd.Flags().StringVarP(&systemSettings.Password, "password", "s", "", "The password to connect with.")
+	cmd.Flags().StringVarP(&systemSettings.Password, "password", "p", "", "The password to connect with.")
 	cmd.Flags().StringVar(&systemSettings.Protocol, "protocol", "https", "Protocol to use (https (default) or http).")
 	cmd.Flags().BoolVar(&systemSettings.Secure, "secure", false, "Enforce certificate validation with https connections (default allows self-signed certs).")
 	cmd.Flags().BoolVar(&makeDefault, "default", false, "Set this connection as the default.")
