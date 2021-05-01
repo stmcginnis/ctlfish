@@ -54,3 +54,30 @@ func GofishClient(connection string) (*gofish.APIClient, error) {
 
 	return c, nil
 }
+
+// BytesToReadable formats a byte count into a human readable representation.
+func BytesToReadable(bytes int64) string {
+	var val float32 = float32(bytes)
+
+	if val < 1024 {
+		return fmt.Sprintf("%0.2f Bytes", val)
+	}
+
+	val = val / 1024
+	if val < 1024 {
+		return fmt.Sprintf("%0.2f KB", val)
+	}
+
+	val = val / 1024
+	if val < 1024 {
+		return fmt.Sprintf("%0.2f MB", val)
+	}
+
+	val = val / 1024
+	if val < 1024 {
+		return fmt.Sprintf("%0.2f GB", val)
+	}
+
+	val = val / 1024
+	return fmt.Sprintf("%0.2f TB", val)
+}

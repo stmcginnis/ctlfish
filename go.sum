@@ -181,8 +181,8 @@ github.com/spf13/pflag v1.0.5/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An
 github.com/spf13/viper v1.7.0/go.mod h1:8WkrPz2fc9jxqZNCJI/76HCieCp4Q8HaLFoCha5qpdg=
 github.com/spf13/viper v1.7.1 h1:pM5oEahlgWv/WnHXpgbKz7iLIxRf65tye2Ci+XFK5sk=
 github.com/spf13/viper v1.7.1/go.mod h1:8WkrPz2fc9jxqZNCJI/76HCieCp4Q8HaLFoCha5qpdg=
-github.com/stmcginnis/gofish v0.9.0 h1:tyT5onLS6xOeqgButwYKVkJ2c74hPDd9Sw+br/KhdLc=
-github.com/stmcginnis/gofish v0.9.0/go.mod h1:BGtQsY16q48M2K6KDAs38QXtNoHrkXaY/WZ/mmyMgNc=
+github.com/stmcginnis/gofish v0.9.1-0.20210501200310-7ddb6f97be05 h1:w4YTcV5L6yW3+1KTGC6/QtAi64ebf6niRIlvcZZx8Qg=
+github.com/stmcginnis/gofish v0.9.1-0.20210501200310-7ddb6f97be05/go.mod h1:BGtQsY16q48M2K6KDAs38QXtNoHrkXaY/WZ/mmyMgNc=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.1.1/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
