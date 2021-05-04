@@ -4,7 +4,7 @@
 
 LAST_TAG = $(shell git describe --tags --abbrev=0 --dirty)
 CHANGES_SINCE_TAG = $(shell git rev-list $(shell git describe --tags --abbrev=0).. --count)
-ifneq ($(CHANGES_SINCE_TAG),"0")
+ifneq ($(CHANGES_SINCE_TAG),0)
 BUILD_VERSION = $(LAST_TAG)-$(CHANGES_SINCE_TAG)
 else
 BUILD_VERSION = $(LAST_TAG)
