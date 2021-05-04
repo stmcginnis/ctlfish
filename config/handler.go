@@ -131,7 +131,7 @@ func IsDefault(system *SystemConfig) bool {
 
 // AddSystemConfig adds or updates system config settings. If system already
 // exists it will be overwritten with the new settings.
-func AddSystemConfig(name string, sysConfig *SystemConfig, makeDefault bool) {
+func AddSystemConfig(name string, sysConfig *SystemConfig, makeDefault bool) error {
 	appConfig.Systems[name] = *sysConfig
 	if makeDefault {
 		appConfig.Default = name
@@ -139,19 +139,21 @@ func AddSystemConfig(name string, sysConfig *SystemConfig, makeDefault bool) {
 	}
 
 	viper.Set("systems", appConfig.Systems)
-	viper.WriteConfig()
+	err := viper.WriteConfig()
+	return err
 }
 
 // RemoveSystemConfig removes system config settings. If the system being removed
 // was the default connection, default is set to nothing.
-func RemoveSystemConfig(name string) {
+func RemoveSystemConfig(name string) error {
 	if appConfig.Default == name {
 		appConfig.Default = ""
 	}
 
 	delete(appConfig.Systems, name)
 	viper.Set("systems", appConfig.Systems)
-	viper.WriteConfig()
+	err := viper.WriteConfig()
+	return err
 }
 
 // SetDefault will set the default system to use if not explicitly provided.
@@ -161,8 +163,8 @@ func SetDefault(name string) error {
 		if system == name {
 			appConfig.Default = name
 			viper.Set("default", name)
-			viper.WriteConfig()
-			return nil
+			err := viper.WriteConfig()
+			return err
 		}
 	}
 

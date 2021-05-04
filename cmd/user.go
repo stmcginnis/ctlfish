@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
+
 	"github.com/stmcginnis/ctlfish/config"
 	"github.com/stmcginnis/ctlfish/utils"
 	"github.com/stmcginnis/gofish/redfish"
@@ -155,7 +156,7 @@ func updateUser(cmd *cobra.Command, args []string) error {
 		newRole := strings.ToLower(roleFlag.Value.String())
 		roleFound := false
 		for _, role := range roles {
-			if newRole == strings.ToLower(role.Name) || newRole == strings.ToLower(role.ID) {
+			if strings.EqualFold(newRole, role.Name) || strings.EqualFold(newRole, role.ID) {
 				user.RoleID = role.ID
 				roleFound = true
 				break

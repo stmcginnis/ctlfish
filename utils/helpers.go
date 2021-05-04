@@ -8,6 +8,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+
 	"github.com/stmcginnis/ctlfish/config"
 	"github.com/stmcginnis/gofish"
 )
@@ -40,16 +41,16 @@ func GofishClient(connection string) (*gofish.APIClient, error) {
 		return nil, Error("unable to get system connection information.\nSet default to use or provide on command line with -c [NAME].")
 	}
 
-	config := gofish.ClientConfig{
+	cfg := gofish.ClientConfig{
 		Endpoint: fmt.Sprintf("%s://%s:%d", settings.Protocol, settings.Host, settings.Port),
 		Username: settings.Username,
 		Password: settings.Password,
 		Insecure: !settings.Secure,
 	}
 
-	c, err := gofish.Connect(config)
+	c, err := gofish.Connect(cfg)
 	if err != nil {
-		return nil, Error("failed to connect to '%s': %v", config.Endpoint, err)
+		return nil, Error("failed to connect to '%s': %v", cfg.Endpoint, err)
 	}
 
 	return c, nil
@@ -63,21 +64,21 @@ func BytesToReadable(bytes int64) string {
 		return fmt.Sprintf("%0.2f Bytes", val)
 	}
 
-	val = val / 1024
+	val /= 1024
 	if val < 1024 {
 		return fmt.Sprintf("%0.2f KB", val)
 	}
 
-	val = val / 1024
+	val /= 1024
 	if val < 1024 {
 		return fmt.Sprintf("%0.2f MB", val)
 	}
 
-	val = val / 1024
+	val /= 1024
 	if val < 1024 {
 		return fmt.Sprintf("%0.2f GB", val)
 	}
 
-	val = val / 1024
+	val /= 1024
 	return fmt.Sprintf("%0.2f TB", val)
 }

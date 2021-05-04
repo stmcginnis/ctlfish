@@ -49,7 +49,7 @@ func NewGetConfigCmd() *cobra.Command {
 	return cmd
 }
 
-// getConfigs returns the save system setting information.
+// getConfigs prints the saved system setting information.
 func getConfigs(cmd *cobra.Command, args []string) {
 	systems := config.GetSystems()
 	defaultSys := config.GetDefault()
@@ -103,8 +103,8 @@ func NewAddConfigCmd() *cobra.Command {
 	cmd.Flags().BoolVar(&systemSettings.Secure, "secure", false, "Enforce certificate validation with https connections (default allows self-signed certs).")
 	cmd.Flags().BoolVar(&makeDefault, "default", false, "Set this connection as the default.")
 
-	cmd.MarkFlagRequired("username")
-	cmd.MarkFlagRequired("password")
+	_ = cmd.MarkFlagRequired("username")
+	_ = cmd.MarkFlagRequired("password")
 
 	cmd.Flags().SortFlags = true
 
@@ -126,10 +126,10 @@ func addNewSystem(cmd *cobra.Command, name string, settings *config.SystemConfig
 	if strings.Contains(settings.Host, "://") {
 		// TODO: This is not complete, but I'm not going to worry about it for now
 		// User provided actual endpoint, parse it out
-		parts := strings.Split(settings.Host, "://")
-		settings.Protocol = parts[0]
-		if strings.Contains(parts[1], ":") {
-			parts := strings.Split(parts[1], ":")
+		protoParts := strings.Split(settings.Host, "://")
+		settings.Protocol = protoParts[0]
+		if strings.Contains(protoParts[1], ":") {
+			parts := strings.Split(protoParts[1], ":")
 			settings.Host = parts[0]
 
 			// Now make sure they didn't include the redfish path
@@ -156,7 +156,10 @@ func addNewSystem(cmd *cobra.Command, name string, settings *config.SystemConfig
 
 	// Add the new connection. We don't validate user name and password here. It
 	// will be handled when they actually try to perform an operation.
-	config.AddSystemConfig(name, settings, makeDefault)
+	err := config.AddSystemConfig(name, settings, makeDefault)
+	if err != nil {
+		return utils.ErrorExit(cmd, "error adding system: %v", err)
+	}
 	getConfigs(cmd, []string{name})
 	return nil
 }
@@ -167,8 +170,12 @@ func NewRemoveConfigCmd() *cobra.Command {
 		Use:   "remove NAME",
 		Short: "Remove stored connection information.",
 		Long:  "Removes connection with the given name.",
-		Run: func(cmd *cobra.Command, args []string) {
-			config.RemoveSystemConfig(args[0])
+		RunE: func(cmd *cobra.Command, args []string) error {
+			err := config.RemoveSystemConfig(args[0])
+			if err != nil {
+				return utils.ErrorExit(cmd, "error removing system: %v", err)
+			}
+			return nil
 		},
 		Args: cobra.ExactArgs(1),
 	}
@@ -215,7 +222,10 @@ func NewSetConfigCmd() *cobra.Command {
 					defaultConnection = makeDefault
 				}
 			})
-			config.AddSystemConfig(args[0], system, defaultConnection)
+			err := config.AddSystemConfig(args[0], system, defaultConnection)
+			if err != nil {
+				return utils.ErrorExit(cmd, "error adding system: %v", err)
+			}
 			getConfigs(cmd, []string{args[0]})
 			return nil
 		},

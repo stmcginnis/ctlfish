@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
+
 	"github.com/stmcginnis/ctlfish/config"
 	"github.com/stmcginnis/ctlfish/utils"
 	"github.com/stmcginnis/gofish/common"
