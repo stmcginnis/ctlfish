@@ -10,30 +10,28 @@ else
 BUILD_VERSION = $(LAST_TAG)
 endif
 
-LD_FLAGS += -X 'github.com/stmcginnis/ctlfish/cmd.BuildVersion=$(BUILD_VERSION)'
+ROOT_DIR := $(shell git rev-parse --show-toplevel)
+GOLANGCI_VERSION := "v1.57"
 
-ENVS := linux-amd64 linux-arm64 windows-amd64 darwin-amd64 darwin-arm64
-CLI_JOBS := $(addprefix build-,${ENVS})
+LD_FLAGS += -X 'github.com/stmcginnis/ctlfish/cmd.BuildVersion=$(BUILD_VERSION)'
 
 all: lint build test
 
 test:
 	go test -v ./...
 
-build: ${CLI_JOBS}
-	@echo "Built ctlfish ${BUILD_VERSION}"
-
-build-%:
-	$(eval ARCH = $(word 2,$(subst -, ,$*)))
-	$(eval OS = $(word 1,$(subst -, ,$*)))
-
-	GOOS=${OS} GOARCH=${ARCH} go build -o bin/ctlfish-${OS}_${ARCH} -ldflags "$(LD_FLAGS)" ./
+build:
+	go build -o bin/ctlfish -ldflags "$(LD_FLAGS)" ./
 
 modules:
 	go mod tidy
 
 lint:
-	golangci-lint run -v
+	docker run --rm \
+		-v "$(ROOT_DIR)":/src \
+		-w /src \
+		"golangci/golangci-lint:$(GOLANGCI_VERSION)" \
+		golangci-lint run -v
 
 clean:
 	go clean

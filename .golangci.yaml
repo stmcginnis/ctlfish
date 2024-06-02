@@ -31,8 +31,6 @@ linters-settings:
     min-complexity: 25
   goimports:
     local-prefixes: github.com/stmcginnis
-  golint:
-    min-confidence: 0
   gomnd:
     settings:
       mnd:
@@ -51,8 +49,6 @@ linters:
   disable-all: true
   enable:
     - bodyclose
-    - deadcode
-    - depguard
     - dogsled
     - errcheck
     - funlen
@@ -61,7 +57,6 @@ linters:
     - gocyclo
     - goheader
     - goimports
-    - golint
     - goprintffuncname
     - gosec
     - gosimple
@@ -71,15 +66,14 @@ linters:
     - nakedret
     - noctx
     - nolintlint
+    - revive
     - rowserrcheck
     - staticcheck
-    - structcheck
     - stylecheck
     - typecheck
     - unconvert
     - unparam
     - unused
-    - varcheck
     - whitespace
 
   # don't enable:

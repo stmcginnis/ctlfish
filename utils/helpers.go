@@ -1,6 +1,4 @@
-//
 // SPDX-License-Identifier: BSD-3-Clause
-//
 package utils
 
 import (
@@ -58,7 +56,7 @@ func GofishClient(connection string) (*gofish.APIClient, error) {
 
 // BytesToReadable formats a byte count into a human readable representation.
 func BytesToReadable(bytes int64) string {
-	var val float32 = float32(bytes)
+	val := float32(bytes)
 
 	if val < 1024 {
 		return fmt.Sprintf("%0.2f Bytes", val)
