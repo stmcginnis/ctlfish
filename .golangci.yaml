@@ -1,13 +1,25 @@
 linters-settings:
+  depguard:
+      rules:
+        prevent_unmaintained_packages:
+          list-mode: lax # allow unless explicitly denied
+          files:
+            - $all
+            - "!$test"
+          allow:
+            - $gostd
+          deny:
+            - pkg: io/ioutil
+              desc: "replaced by io and os packages since Go 1.16: https://tip.golang.org/doc/go1.16#ioutil"
   dupl:
-    threshold: 100
+    threshold: 200
   funlen:
     lines: 100
     statements: 50
   goheader:
     values:
       const:
-       - LICENSE: BSD-3-Clause
+        - LICENSE: BSD-3-Clause
     template: |-
       SPDX-License-Identifier: {{ LICENSE }}
   goconst:
@@ -28,15 +40,13 @@ linters-settings:
       - whyNoLint
       - wrapperFunc
   gocyclo:
-    min-complexity: 25
+    min-complexity: 30
   goimports:
     local-prefixes: github.com/stmcginnis
-  gomnd:
-    settings:
-      mnd:
-        checks: argument,case,condition,return
   govet:
-    check-shadowing: true
+    enable-all: true
+    disable:
+      - fieldalignment
   misspell:
     locale: US
   nolintlint:
@@ -49,7 +59,9 @@ linters:
   disable-all: true
   enable:
     - bodyclose
+    - depguard
     - dogsled
+    - dupl
     - errcheck
     - funlen
     - goconst
@@ -79,7 +91,6 @@ linters:
   # don't enable:
   # - asciicheck
   # - exhaustive
-  # - dupl
   # - gochecknoinits
   # - gochecknoglobals
   # - gocognit
@@ -97,9 +108,11 @@ linters:
 
 issues:
   exclude:
-    - 'declaration of "err" shadows declaration at'
-
-# golangci.com configuration
-# https://github.com/golangci/golangci/wiki/Configuration
-service:
-  golangci-lint-version: 1.38.0 # use the fixed version to not introduce new linters unexpectedly
+    - 'declaration of "(err|ctx)" shadows declaration at'
+    - "G402: TLS InsecureSkipVerify may be true"
+    - "`(F|f)ibre` is a misspelling"
+    - "`(C|c)ancell.*` is a misspelling"
+    - "Error return value of `original.UnmarshalJSON` is not checked"
+  exclude-dirs:
+    - examples
+    - tools

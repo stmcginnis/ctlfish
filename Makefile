@@ -11,14 +11,14 @@ BUILD_VERSION = $(LAST_TAG)
 endif
 
 ROOT_DIR := $(shell git rev-parse --show-toplevel)
-GOLANGCI_VERSION := "v1.57"
+GOLANGCI_VERSION := "v1.59.1"
 
 LD_FLAGS += -X 'github.com/stmcginnis/ctlfish/cmd.BuildVersion=$(BUILD_VERSION)'
 
 all: lint build test
 
 test:
-	go test -v ./...
+	go test -cover -race -v ./...
 
 build:
 	go build -o bin/ctlfish -ldflags "$(LD_FLAGS)" ./
