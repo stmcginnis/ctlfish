@@ -6,6 +6,9 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/stmcginnis/ctlfish/cmd/get"
+	"github.com/stmcginnis/ctlfish/cmd/reset"
+	"github.com/stmcginnis/ctlfish/cmd/set"
 	"github.com/stmcginnis/ctlfish/config"
 )
 
@@ -29,4 +32,8 @@ func init() {
 	var cfgFile string
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ctlfish.yaml)")
 	config.InitConfig(cfgFile)
+
+	rootCmd.AddCommand(get.Cmd())
+	rootCmd.AddCommand(reset.Cmd())
+	rootCmd.AddCommand(set.Cmd())
 }

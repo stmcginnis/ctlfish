@@ -1,36 +1,19 @@
 // SPDX-License-Identifier: BSD-3-Clause
-package cmd
+package get
 
 import (
 	"github.com/spf13/cobra"
-
-	"github.com/stmcginnis/ctlfish/config"
-	"github.com/stmcginnis/ctlfish/utils"
 	"github.com/stmcginnis/gofish/redfish"
+
+	"github.com/stmcginnis/ctlfish/utils"
 )
 
-// driveCmd represents the drive command
 var driveCmd = &cobra.Command{
-	Use:   "drive",
-	Short: "Commands for viewing and interacting with drive objects",
-}
-
-func init() {
-	driveCmd.AddCommand(NewGetDriveCmd())
-	rootCmd.AddCommand(driveCmd)
-	driveCmd.PersistentFlags().StringP("connection", "c", config.GetDefault(), "The stored connection name to use.")
-}
-
-// NewGetDriveCmd returns a command for getting drive information.
-func NewGetDriveCmd() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "get [NAME_OR_ID]",
-		Short: "Get drive information.",
-		RunE:  getDrive,
-		Args:  cobra.MaximumNArgs(1),
-	}
-
-	return cmd
+	Use:     "drive [NAME_OR_ID]",
+	Aliases: []string{"drives", "d"},
+	Short:   "Get drive information.",
+	RunE:    getDrive,
+	Args:    cobra.MaximumNArgs(1),
 }
 
 // getDrive retrieves the drive information.

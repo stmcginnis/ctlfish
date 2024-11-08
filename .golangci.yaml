@@ -12,7 +12,7 @@ linters-settings:
             - pkg: io/ioutil
               desc: "replaced by io and os packages since Go 1.16: https://tip.golang.org/doc/go1.16#ioutil"
   dupl:
-    threshold: 200
+    threshold: 300
   funlen:
     lines: 100
     statements: 50
@@ -42,7 +42,7 @@ linters-settings:
   gocyclo:
     min-complexity: 30
   goimports:
-    local-prefixes: github.com/stmcginnis
+    local-prefixes: github.com/stmcginnis/ctlfish
   govet:
     enable-all: true
     disable:

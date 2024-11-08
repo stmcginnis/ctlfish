@@ -6,9 +6,9 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+	"github.com/stmcginnis/gofish"
 
 	"github.com/stmcginnis/ctlfish/config"
-	"github.com/stmcginnis/gofish"
 )
 
 // ErrorExit is a helper function to format the error result of a command execution.
