@@ -25,24 +25,31 @@ func getDrive(cmd *cobra.Command, args []string) error {
 	}
 	defer c.Logout()
 
-	chassiss, err := c.Service.Chassis()
+	systems, err := c.Service.Systems()
 	if err != nil {
 		return utils.ErrorExit(cmd, "failed to retrieve system information: %v", err)
 	}
 
-	// TODO: we may need to look between the System, Chassis, and Storage root
-	// objects to collect all drive information. Also need to check if we need
-	// to scrub in case there are multiple relationships to the same drives.
-
-	// Collect drive info from all chassis
+	// Collect drive info from all systems
 	drives := []*redfish.Drive{}
-	for _, chassis := range chassiss {
-		chassisDrives, err := chassis.Drives()
+	for _, sys := range systems {
+		storage, err := sys.Storage()
 		if err != nil {
-			return utils.ErrorExit(cmd, "failed to get drive information for chassis %q", chassis.Name)
+			return utils.ErrorExit(
+				cmd,
+				"failed to get drive information for system %q",
+				sys.Name)
 		}
 
-		drives = append(drives, chassisDrives...)
+		for _, stor := range storage {
+			storageDrives, err := stor.Drives()
+			if err != nil {
+				// Some storage systems do not contain drives
+				continue
+			}
+
+			drives = append(drives, storageDrives...)
+		}
 	}
 
 	writer := utils.NewTableWriter(
